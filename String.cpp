@@ -14,7 +14,6 @@ String::String(const String &src) : _size(src._size)
 
 String::String(const char *str)
 {
-
     std::cerr << "constructs (from char*)" << std::endl;
     _size = std::strlen(str);
 
@@ -45,7 +44,30 @@ const String &String::operator=(const String &str)
     return *this;
 }
 
-String String::operator+(const char *str)
+String String::_repeat(std::size_t amount) const
+{
+    if (amount == 0)
+    {
+        return String("");
+    }
+    else if(amount == 1){
+        return String(*this);
+    }
+    else 
+    {
+        String copy(*this);
+        copy._size *= 5;
+        while(amount > 1){
+            
+        }
+    }
+};
+
+String String::operator*(std::size_t amount) const {
+
+};
+
+String String::operator+(const char *str) const
 {
     String copy(*this);
     copy._size += std::strlen(str);
@@ -78,12 +100,12 @@ String::~String()
     _addr = nullptr;
 }
 
-const char *String::address()
+const char *String::address() const
 {
     return (const char *)_addr;
 }
 
-std::size_t String::size()
+std::size_t String::size() const
 {
     return _size;
 }

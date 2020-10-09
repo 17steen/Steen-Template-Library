@@ -8,10 +8,11 @@
 class String
 {
 public:
-	const char *address();
-	std::size_t size();
+	const char *address() const;
+	std::size_t size() const;
 
-	String operator+(const char *str);
+	String operator+(const char *str) const;
+	String operator*(std::size_t amount) const;
 
 	const String &operator+=(const char *str);
 	const String &operator=(const char *str);
@@ -28,4 +29,5 @@ public:
 private:
 	std::size_t _size;
 	char *_addr;
+	String _repeat(std::size_t) const;
 };
