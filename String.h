@@ -5,24 +5,27 @@
 #include <cstring>
 #include <cstdio>
 
-class String  
+class String
 {
-	private:
-		std::size_t _size;
-		std::size_t allocated;
+public:
+	const char *address();
+	std::size_t size();
 
-		char *_addr;
-	public:
+	String operator+(const char *str);
 
-		const char* address();
-		std::size_t size();
+	const String &operator+=(const char *str);
+	const String &operator=(const char *str);
+	const String &operator=(const String &str);
 
-		String operator+(const char* str);
+	String(const String &src);
 
-		String(String& src);
+	String();
+	String(const char *str);
+	~String();
 
-		String();
-		String(const char *str);
-		~String();
+	friend std::ostream &operator<<(std::ostream &os, const String &str);
 
+private:
+	std::size_t _size;
+	char *_addr;
 };
