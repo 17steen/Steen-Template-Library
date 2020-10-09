@@ -43,6 +43,17 @@ const String &String::operator=(const String &str)
 
     return *this;
 }
+/*
+String String::repeat(std::size_t amount) const
+{
+    return _repeat(amount);
+}
+
+String String::operator*(std::size_t amount) const
+{
+    return _repeat(amount);
+};
+*/
 
 String String::_repeat(std::size_t amount) const
 {
@@ -50,21 +61,32 @@ String String::_repeat(std::size_t amount) const
     {
         return String("");
     }
-    else if(amount == 1){
+    else if (amount == 1)
+    {
         return String(*this);
     }
-    else 
+    else
     {
         String copy(*this);
-        copy._size *= 5;
-        while(amount > 1){
-            
+        copy._size *= amount;
+        LOG("new size : " << copy._size);
+        char *tmp = copy._addr;
+        tmp = (char *)std::realloc((void *)copy._addr, (copy._size + 1) * sizeof(char));
+        if (!tmp)
+        {
+            //handle not enough memory
+            exit(1);
         }
+        while (amount > 1)
+        {
+            LOG("Loop");
+            copy._addr = tmp;
+            std::strcat(copy._addr, this->_addr);
+            --amount;
+        }
+        copy.set_zero();
+        return copy;
     }
-};
-
-String String::operator*(std::size_t amount) const {
-
 };
 
 String String::operator+(const char *str) const
@@ -83,6 +105,7 @@ String String::operator+(const char *str) const
     {
         copy._addr = tmp;
         std::strcat(copy._addr, str);
+        copy.set_zero();
     }
     return copy;
 }
@@ -113,4 +136,21 @@ std::size_t String::size() const
 std::ostream &operator<<(std::ostream &os, const String &str)
 {
     return os << str._addr;
+}
+
+String &String::set_zero()
+{
+    _addr[_size] = '\0';
+    return *this;
+}
+
+
+StringIterator String::begin()
+{
+    return StringIterator(_addr);
+}
+
+StringIterator String::end()
+{
+    return StringIterator(_addr + _size);
 }

@@ -4,7 +4,7 @@ project(test VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_executable(test0 String.cpp test.cpp)
+add_executable(test0 String.cpp StringIterator.cpp test.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
