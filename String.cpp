@@ -19,6 +19,11 @@ String::String(const char *str)
 
     _addr = (char *)std::calloc(_size + 1, sizeof(char));
 
+    if(!_addr){
+        std::cerr << "out of memory !" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     std::strcpy(_addr, str);
 }
 
@@ -33,8 +38,12 @@ const String &String::operator=(const String &str)
 {
     LOG("assign (from string&)");
     this->~String();
+    LOG("after destruction");
     _size = str._size;
-    _addr = (char *)std::calloc(_size + 1, sizeof(char));
+    LOG(_size);
+    _addr = (char *)std::calloc(_size + 10, sizeof(char));
+    
+    LOG("after calloc");
     if (!_addr)
     {
         exit(1);
@@ -43,17 +52,6 @@ const String &String::operator=(const String &str)
 
     return *this;
 }
-/*
-String String::repeat(std::size_t amount) const
-{
-    return _repeat(amount);
-}
-
-String String::operator*(std::size_t amount) const
-{
-    return _repeat(amount);
-};
-*/
 
 String String::_repeat(std::size_t amount) const
 {
@@ -144,9 +142,16 @@ std::ostream &operator<<(std::ostream &os, const String &str)
     return os << str._addr;
 }
 
+
 String operator+(const char *left, const String &right)
 {
-    return String(left) + right._addr;
+    std::cerr << left << std::endl;
+    String tmp(left);
+    LOG("test str left op :\n" << tmp << " | " << tmp.size());
+    LOG("before + bs");
+    String xd = tmp + right;
+    LOG(xd << " | " << xd.size());
+    return xd;
 }
 
 String String::operator+(const String &right) const
@@ -171,33 +176,33 @@ StringIterator String::end()
     return StringIterator(_addr + _size);
 }
 
-bool String::operator==(const String &str)
+bool String::operator==(const String &str) const
 {
     return _comp(str) == 0;
 };
 
-bool String::operator!=(const String &str)
+bool String::operator!=(const String &str) const
 {
     return _comp(str) != 0;
 };
 
-bool String::operator>(const String &str)
+bool String::operator>(const String &str) const
 {
     return _comp(str) > 0;
 };
 
-bool String::operator<(const String &str)
+bool String::operator<(const String &str) const
 {
     return _comp(str) < 0;
 };
 
-bool String::operator>=(const String &str)
+bool String::operator>=(const String &str) const
 {
     int res = _comp(str);
     return res == 0 || res > 0;
 };
 
-bool String::operator<=(const String &str)
+bool String::operator<=(const String &str) const
 {
     int res = _comp(str);
     return res == 0 || res < 0;

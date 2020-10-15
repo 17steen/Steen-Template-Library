@@ -39,13 +39,14 @@ public:
 	const String &operator=(const char *str);
 	const String &operator=(const String &str);
 
-	bool operator==(const String &str);
-	bool operator<(const String &str);
-	bool operator>(const String &str);
+	bool operator==(const String &str) const;
+	bool operator<(const String &str) const;
+	bool operator>(const String &str) const;
 
-	bool operator!=(const String &str);
-	bool operator>=(const String &str);
-	bool operator<=(const String &str);
+	bool operator!=(const String &str) const;
+	bool operator>=(const String &str) const;
+	bool operator<=(const String &str) const;
+		
 
 	inline String repeat(std::size_t amount) const
 	{
@@ -64,8 +65,9 @@ public:
 	Iterator begin();
 	Iterator end();
 
-	friend std::ostream &operator<<(std::ostream &os, const String &str);
-	friend String operator+(const char *left, const String& right);
+	friend std::ostream &operator<<(std::ostream &os, const String &);
+	friend std::istream &operator>>(std::istream &is, String &);
+	friend String operator+(const char *, const String& );
 
 private:
 	std::size_t _size;
