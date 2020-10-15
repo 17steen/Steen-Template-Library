@@ -4,10 +4,27 @@ String::String() : String("")
 {
 }
 
+char *String::_alloc(size_t amount)
+{
+    return new char[amount];
+}
+
+//takes care of resizing and copying + assigning the new length
+char *String::_re_alloc(String& str, size_t len_next)
+{
+    char *tmp = new char[len_next + 1];
+    char *end = std::uninitialized_copy(str._addr, str._addr + str._size, tmp);
+    delete[] str._addr;
+    str._addr = tmp;
+    str._size = len_next;
+    
+    return end;
+}
+
 String::String(const String &src) : _size(src._size)
 {
     LOG("constructs (from copy)");
-    _addr = (char *)std::calloc(_size + 1, sizeof(char));
+    _addr = _alloc(_size + 1);
 
     std::strcpy(_addr, src._addr);
 }
@@ -17,9 +34,10 @@ String::String(const char *str)
     LOG("constructs (from char*)");
     _size = std::strlen(str);
 
-    _addr = (char *)std::calloc(_size + 1, sizeof(char));
+    _addr = _alloc(_size + 1);
 
-    if(!_addr){
+    if (!_addr)
+    {
         std::cerr << "out of memory !" << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -41,8 +59,8 @@ const String &String::operator=(const String &str)
     LOG("after destruction");
     _size = str._size;
     LOG(_size);
-    _addr = (char *)std::calloc(_size + 10, sizeof(char));
-    
+    _addr = _alloc(_size + 1);
+
     LOG("after calloc");
     if (!_addr)
     {
@@ -90,21 +108,11 @@ String String::_repeat(std::size_t amount) const
 String String::operator+(const char *str) const
 {
     String copy(*this);
-    copy._size += std::strlen(str);
-    char *tmp = copy._addr;
+    size_t len = std::strlen(str);
+    size_t full_len = len + _size;
+    char *end = _re_alloc(copy, full_len);
+    std::uninitialized_copy(str, str + len, end);
 
-    tmp = (char *)std::realloc((void *)copy._addr, (_size + 1) * sizeof(char));
-    if (!tmp)
-    {
-        //handle not enough memory
-        exit(1);
-    }
-    else
-    {
-        copy._addr = tmp;
-        std::strcat(copy._addr, str);
-        copy.set_zero();
-    }
     return copy;
 }
 
@@ -123,13 +131,13 @@ const String &String::operator+=(const String &str)
 String::~String()
 {
     LOG("destructs");
-    std::free((void *)_addr);
+    delete[] _addr;
     _addr = nullptr;
 }
 
 const char *String::address() const
 {
-    return (const char *)_addr;
+    return _addr;
 }
 
 std::size_t String::size() const
@@ -142,23 +150,15 @@ std::ostream &operator<<(std::ostream &os, const String &str)
     return os << str._addr;
 }
 
-
 String operator+(const char *left, const String &right)
 {
-    std::cerr << left << std::endl;
-    String tmp(left);
-    LOG("test str left op :\n" << tmp << " | " << tmp.size());
-    LOG("before + bs");
-    String xd = tmp + right;
-    LOG(xd << " | " << xd.size());
-    return xd;
+    return String(left) + right;
 }
 
 String String::operator+(const String &right) const
 {
     return *this + right._addr;
 }
-
 
 String &String::set_zero()
 {

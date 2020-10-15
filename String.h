@@ -15,6 +15,7 @@
 #endif
 
 #include <iostream>
+#include <memory>
 
 #include <cctype>
 #include <cstring>
@@ -46,7 +47,6 @@ public:
 	bool operator!=(const String &str) const;
 	bool operator>=(const String &str) const;
 	bool operator<=(const String &str) const;
-		
 
 	inline String repeat(std::size_t amount) const
 	{
@@ -67,7 +67,7 @@ public:
 
 	friend std::ostream &operator<<(std::ostream &os, const String &);
 	friend std::istream &operator>>(std::istream &is, String &);
-	friend String operator+(const char *, const String& );
+	friend String operator+(const char *, const String &);
 
 private:
 	std::size_t _size;
@@ -75,4 +75,7 @@ private:
 	String &set_zero();
 	String _repeat(std::size_t) const;
 	int _comp(const String &) const;
+
+	static char *_alloc(size_t amount);
+	static char *_re_alloc(String& str,size_t amount);
 };
