@@ -1,12 +1,13 @@
 #include "String.h"
 
-String::String() : _addr(nullptr), _size(0)
+String::String()
 {
+    *this = String("");
 }
 
 String::String(const String &src) : _size(src._size)
 {
-    std::cerr << "constructs (from copy)" << std::endl;
+    LOG("constructs (from copy)");
     _addr = (char *)std::calloc(_size + 1, sizeof(char));
 
     std::strcpy(_addr, src._addr);
@@ -14,7 +15,7 @@ String::String(const String &src) : _size(src._size)
 
 String::String(const char *str)
 {
-    std::cerr << "constructs (from char*)" << std::endl;
+    LOG("constructs (from char*)");
     _size = std::strlen(str);
 
     _addr = (char *)std::calloc(_size + 1, sizeof(char));
@@ -24,14 +25,14 @@ String::String(const char *str)
 
 const String &String::operator=(const char *str)
 {
-    std::cerr << "assign (from char*)" << std::endl;
+    LOG("assign (from char*)");
     *this = String(str);
     return *this;
 }
 
 const String &String::operator=(const String &str)
 {
-    std::cerr << "assign (from string&)" << std::endl;
+    LOG("assign (from string&)");
     this->~String();
     _size = str._size;
     _addr = (char *)std::calloc(_size + 1, sizeof(char));
@@ -118,7 +119,7 @@ const String &String::operator+=(const char *str)
 
 String::~String()
 {
-    std::cerr << "destructs" << std::endl;
+    LOG("destructs");
     std::free((void *)_addr);
     _addr = nullptr;
 }
@@ -153,4 +154,38 @@ StringIterator String::begin()
 StringIterator String::end()
 {
     return StringIterator(_addr + _size);
+}
+
+bool String::operator==(const String& str){
+    return _comp(str) == 0;
+};
+
+bool String::operator!=(const String& str){
+    return _comp(str) != 0;
+};
+
+
+bool String::operator>(const String& str){
+    return _comp(str) > 0;
+};
+
+bool String::operator<(const String& str){
+    return _comp(str) < 0;
+};
+
+
+bool String::operator>=(const String& str){
+    int res = _comp(str);
+    return  res == 0 || res > 0;
+};
+
+bool String::operator<=(const String& str){
+    int res = _comp(str);
+    return  res == 0 || res < 0;
+};
+
+
+int String::_comp(const String& str) const
+{
+    return std::strcmp(_addr, str._addr);
 }
