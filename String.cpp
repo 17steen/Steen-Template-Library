@@ -1,8 +1,7 @@
 #include "String.h"
 
-String::String()
+String::String() : String("")
 {
-    *this = String("");
 }
 
 String::String(const String &src) : _size(src._size)
@@ -117,6 +116,12 @@ const String &String::operator+=(const char *str)
     return *this;
 }
 
+const String &String::operator+=(const String &str)
+{
+    *this = *this + str._addr;
+    return *this;
+}
+
 String::~String()
 {
     LOG("destructs");
@@ -139,12 +144,22 @@ std::ostream &operator<<(std::ostream &os, const String &str)
     return os << str._addr;
 }
 
+String operator+(const char *left, const String &right)
+{
+    return String(left) + right._addr;
+}
+
+String String::operator+(const String &right) const
+{
+    return *this + right._addr;
+}
+
+
 String &String::set_zero()
 {
     _addr[_size] = '\0';
     return *this;
 }
-
 
 StringIterator String::begin()
 {
@@ -156,36 +171,39 @@ StringIterator String::end()
     return StringIterator(_addr + _size);
 }
 
-bool String::operator==(const String& str){
+bool String::operator==(const String &str)
+{
     return _comp(str) == 0;
 };
 
-bool String::operator!=(const String& str){
+bool String::operator!=(const String &str)
+{
     return _comp(str) != 0;
 };
 
-
-bool String::operator>(const String& str){
+bool String::operator>(const String &str)
+{
     return _comp(str) > 0;
 };
 
-bool String::operator<(const String& str){
+bool String::operator<(const String &str)
+{
     return _comp(str) < 0;
 };
 
-
-bool String::operator>=(const String& str){
+bool String::operator>=(const String &str)
+{
     int res = _comp(str);
-    return  res == 0 || res > 0;
+    return res == 0 || res > 0;
 };
 
-bool String::operator<=(const String& str){
+bool String::operator<=(const String &str)
+{
     int res = _comp(str);
-    return  res == 0 || res < 0;
+    return res == 0 || res < 0;
 };
 
-
-int String::_comp(const String& str) const
+int String::_comp(const String &str) const
 {
     return std::strcmp(_addr, str._addr);
 }
