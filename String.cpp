@@ -12,7 +12,7 @@ char *String::_alloc(size_t amount)
 //takes care of resizing and copying + assigning the new length
 char *String::_re_alloc(String& str, size_t len_next)
 {
-    char *tmp = new char[len_next + 1];
+    char *tmp = _alloc(len_next + 1);
     char *end = std::uninitialized_copy(str._addr, str._addr + str._size, tmp);
     delete[] str._addr;
     str._addr = tmp;
@@ -50,7 +50,7 @@ String::String(std::istream &is){
     LOG("size of buffer" << sizeof(buffer));
     is.getline(buffer, sizeof(buffer) - 1, '\n');
     size_t len = std::strlen(buffer);
-    _addr = new char[len + 1];
+    _addr = _alloc(len + 1);
     std::strncpy(_addr, buffer, len);
     _size = len;
     set_zero();
@@ -73,7 +73,7 @@ const String &String::operator=(const String &str)
     LOG(_size);
     _addr = _alloc(_size + 1);
 
-    LOG("after calloc");
+    LOG("after alloc");
     if (!_addr)
     {
         exit(1);
@@ -96,20 +96,13 @@ String String::_repeat(std::size_t amount) const
     else
     {
         String copy(*this);
-        copy._size *= amount;
         LOG("new size : " << copy._size);
-        char *tmp = copy._addr;
-        tmp = (char *)std::realloc((void *)copy._addr, (copy._size + 1) * sizeof(char));
-        if (!tmp)
-        {
-            //handle not enough memory
-            exit(1);
-        }
+        char *end = _re_alloc(copy, copy._size * amount);
         while (amount > 1)
         {
             LOG("Loop");
-            copy._addr = tmp;
-            std::strcat(copy._addr, this->_addr);
+            end = std::uninitialized_copy(this->_addr,
+                                    this->_addr + this->_size, end);
             --amount;
         }
         copy.set_zero();
