@@ -8,9 +8,15 @@
   
 
 int main(int, char**) {
-    String hello;
+    String hello("012345");
 
-    std::cin >> hello;
+    try{
+        LOG(hello.at(-6));
+        LOG(hello.at(-7));
+    }
+    catch (const char* what){
+        std::cerr << what << std::endl;
+    }
 
 
 #if 1

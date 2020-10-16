@@ -35,6 +35,9 @@ public:
 	String operator+(const char *str) const;
 	String operator+(const String &str) const;
 
+	char &operator[](int);
+	char &at(int);
+
 	const String &operator+=(const char *str);
 	const String &operator+=(const String &str);
 	const String &operator=(const char *str);
@@ -78,5 +81,5 @@ private:
 	int _comp(const String &) const;
 
 	static char *_alloc(size_t amount);
-	static char *_re_alloc(String& str,size_t amount);
+	static char *_re_alloc(String &str, size_t amount);
 };

@@ -4,9 +4,9 @@ StringIterator::StringIterator(char *ptr) : ptr_(ptr)
 {
 }
 
-StringIterator::StringIterator(const StringIterator &iterator)
+StringIterator::StringIterator(const StringIterator &it)
 {
-    ptr_ = iterator.ptr_;
+    ptr_ = it.ptr_;
 }
 StringIterator::~StringIterator()
 {

@@ -10,14 +10,14 @@ char *String::_alloc(size_t amount)
 }
 
 //takes care of resizing and copying + assigning the new length
-char *String::_re_alloc(String& str, size_t len_next)
+char *String::_re_alloc(String &str, size_t len_next)
 {
     char *tmp = _alloc(len_next + 1);
     char *end = std::uninitialized_copy(str._addr, str._addr + str._size, tmp);
     delete[] str._addr;
     str._addr = tmp;
     str._size = len_next;
-    
+
     return end;
 }
 
@@ -45,8 +45,9 @@ String::String(const char *str)
     std::strcpy(_addr, str);
 }
 
-String::String(std::istream &is){
-    char buffer[255] = { 0 };
+String::String(std::istream &is)
+{
+    char buffer[255] = {0};
     LOG("size of buffer" << sizeof(buffer));
     is.getline(buffer, sizeof(buffer) - 1, '\n');
     size_t len = std::strlen(buffer);
@@ -55,7 +56,6 @@ String::String(std::istream &is){
     _size = len;
     set_zero();
 }
-
 
 const String &String::operator=(const char *str)
 {
@@ -102,7 +102,7 @@ String String::_repeat(std::size_t amount) const
         {
             LOG("Loop");
             end = std::uninitialized_copy(this->_addr,
-                                    this->_addr + this->_size, end);
+                                          this->_addr + this->_size, end);
             --amount;
         }
         copy.set_zero();
@@ -119,6 +119,26 @@ String String::operator+(const char *str) const
     std::uninitialized_copy(str, str + len, end);
 
     return copy;
+}
+
+char &String::operator[](int index){
+    return _addr[index];
+}
+
+//boundary checking and reverse access (negative)
+char &String::at(int index)
+{
+    bool is_positive = index >= 0 ? true : false;
+    int max_reach = is_positive ? index : -index - 1;
+    if(max_reach >= _size){
+        throw "Index out of range";
+    }
+    if(is_positive){
+        return _addr[index];
+    }
+    else{
+        return _addr[_size + index];
+    }
 }
 
 const String &String::operator+=(const char *str)
@@ -155,11 +175,13 @@ std::ostream &operator<<(std::ostream &os, const String &str)
     return os << str._addr;
 }
 
-std::istream &operator>>(std::istream &is, String &str){
+
+//length of the buffer is 255;
+std::istream &operator>>(std::istream &is, String &str)
+{
     str = String(is);
     return is;
 }
-	
 
 String operator+(const char *left, const String &right)
 {
