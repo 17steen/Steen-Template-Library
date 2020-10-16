@@ -45,6 +45,18 @@ String::String(const char *str)
     std::strcpy(_addr, str);
 }
 
+String::String(std::istream &is){
+    char buffer[255] = { 0 };
+    LOG("size of buffer" << sizeof(buffer));
+    is.getline(buffer, sizeof(buffer) - 1, '\n');
+    size_t len = std::strlen(buffer);
+    _addr = new char[len + 1];
+    std::strncpy(_addr, buffer, len);
+    _size = len;
+    set_zero();
+}
+
+
 const String &String::operator=(const char *str)
 {
     LOG("assign (from char*)");
@@ -149,6 +161,12 @@ std::ostream &operator<<(std::ostream &os, const String &str)
 {
     return os << str._addr;
 }
+
+std::istream &operator>>(std::istream &is, String &str){
+    str = String(is);
+    return is;
+}
+	
 
 String operator+(const char *left, const String &right)
 {

@@ -60,6 +60,7 @@ public:
 	String();
 	String(const char *str);
 	String(const String &src);
+	String(std::istream &);
 	~String();
 
 	Iterator begin();

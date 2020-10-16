@@ -8,7 +8,10 @@
   
 
 int main(int, char**) {
-    String hello("Hello ");
+    String hello;
+
+    std::cin >> hello;
+
 
 #if 1
     {
