@@ -20,6 +20,7 @@
 #include <cctype>
 #include <cstring>
 #include <cstdio>
+#include <cstdarg>
 
 #include "StringIterator.h"
 
@@ -34,6 +35,8 @@ public:
 
 	String operator+(const char *str) const;
 	String operator+(const String &str) const;
+
+	static String format(const char* format, ...);
 
 	char &operator[](int);
 	char &at(int);
@@ -63,6 +66,7 @@ public:
 	String();
 	String(const char *str);
 	String(const String &src);
+	String(String &&src) noexcept;
 	String(std::istream &);
 	~String();
 

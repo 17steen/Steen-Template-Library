@@ -8,11 +8,11 @@
   
 
 int main(int, char**) {
-    String hello("012345");
-
+    String hello = "Hello";
+    std::move(hello);
+    ///hello = String::format("%d", 130);
     try{
-        LOG(hello.at(-6));
-        LOG(hello.at(-7));
+        LOG(hello << " xd");
     }
     catch (const char* what){
         std::cerr << what << std::endl;
@@ -23,8 +23,7 @@ int main(int, char**) {
     {
         String test(hello);
         std::cout << test * 5 << std::endl; //correct result 
-        std::cout << test.repeat(5) << std::endl; //correct result 
-        
+    
         std::cout << ((test == "Hello ") ? "it's true" : "it's false") << std::endl; 
     }
 #endif

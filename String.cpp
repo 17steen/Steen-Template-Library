@@ -21,12 +21,28 @@ char *String::_re_alloc(String &str, size_t len_next)
     return end;
 }
 
+String String::format(const char* format, ...){
+    char buffer[256] = { 0 };
+    va_list args;
+    va_start(args, format);
+    std::vsnprintf (buffer, 256, format, args);
+    va_end(args);
+    return String(buffer);
+}
+
 String::String(const String &src) : _size(src._size)
 {
     LOG("constructs (from copy)");
     _addr = _alloc(_size + 1);
 
     std::strcpy(_addr, src._addr);
+}
+
+String::String(String &&src) noexcept :
+    _size(src._size), _addr(src._addr)
+{
+    src._addr = nullptr;
+    LOG("constructs (from moving)");
 }
 
 String::String(const char *str)
@@ -47,7 +63,7 @@ String::String(const char *str)
 
 String::String(std::istream &is)
 {
-    char buffer[255] = {0};
+    char buffer[256] = {0};
     LOG("size of buffer" << sizeof(buffer));
     is.getline(buffer, sizeof(buffer) - 1, '\n');
     size_t len = std::strlen(buffer);
@@ -96,8 +112,8 @@ String String::_repeat(std::size_t amount) const
     else
     {
         String copy(*this);
-        LOG("new size : " << copy._size);
         char *end = _re_alloc(copy, copy._size * amount);
+        LOG("new size : " << copy._size);
         while (amount > 1)
         {
             LOG("Loop");
@@ -121,7 +137,8 @@ String String::operator+(const char *str) const
     return copy;
 }
 
-char &String::operator[](int index){
+char &String::operator[](int index)
+{
     return _addr[index];
 }
 
@@ -130,13 +147,16 @@ char &String::at(int index)
 {
     bool is_positive = index >= 0 ? true : false;
     int max_reach = is_positive ? index : -index - 1;
-    if(max_reach >= _size){
-        throw "Index out of range";
+    if (max_reach >= _size)
+    {
+        throw std::out_of_range("String::at() : Index out of range.");
     }
-    if(is_positive){
+    if (is_positive)
+    {
         return _addr[index];
     }
-    else{
+    else
+    {
         return _addr[_size + index];
     }
 }
@@ -149,14 +169,17 @@ const String &String::operator+=(const char *str)
 
 const String &String::operator+=(const String &str)
 {
-    *this = *this + str._addr;
+    //*this = *this + str._addr;
+    char *end = _re_alloc(*this, _size + str._size + 1);
+    std::uninitialized_copy(str._addr, str._addr + str._size, end);
+    set_zero();
     return *this;
 }
 
 String::~String()
 {
     LOG("destructs");
-    delete[] _addr;
+    if(_addr) delete[] _addr;
     _addr = nullptr;
 }
 
@@ -174,7 +197,6 @@ std::ostream &operator<<(std::ostream &os, const String &str)
 {
     return os << str._addr;
 }
-
 
 //length of the buffer is 255;
 std::istream &operator>>(std::istream &is, String &str)
