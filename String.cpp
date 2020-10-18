@@ -52,13 +52,9 @@ String::String(const char *str)
 
     _addr = _alloc(_size + 1);
 
-    if (!_addr)
-    {
-        std::cerr << "out of memory !" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
     std::strcpy(_addr, str);
+
+    set_zero();
 }
 
 String::String(std::istream &is)
@@ -89,11 +85,6 @@ const String &String::operator=(const String &str)
     LOG(_size);
     _addr = _alloc(_size + 1);
 
-    LOG("after alloc");
-    if (!_addr)
-    {
-        exit(1);
-    }
     std::strcpy(_addr, str._addr);
 
     return *this;
@@ -163,17 +154,16 @@ char &String::at(int index)
 
 const String &String::operator+=(const char *str)
 {
-    *this = *this + str;
+    size_t len = strlen(str);
+    char *end = _re_alloc(*this, _size + len);
+    std::uninitialized_copy(str, str + len, end);
+    set_zero();
     return *this;
 }
 
 const String &String::operator+=(const String &str)
 {
-    //*this = *this + str._addr;
-    char *end = _re_alloc(*this, _size + str._size + 1);
-    std::uninitialized_copy(str._addr, str._addr + str._size, end);
-    set_zero();
-    return *this;
+    return *this += str._addr;
 }
 
 String::~String()
