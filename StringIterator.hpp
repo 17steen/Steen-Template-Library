@@ -9,7 +9,7 @@ class StringIterator
 public:
     using iterator = StringIterator<is_const>;
     using difference_type = std::ptrdiff_t;
-    using value_type = typename std::conditional<is_const, const char, char>::type;
+    using value_type = std::conditional<is_const, const char, char>::type;
     using pointer = value_type *;
     using reference = value_type &;
     using iterator_category = std::forward_iterator_tag;
