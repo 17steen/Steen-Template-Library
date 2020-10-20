@@ -11,7 +11,7 @@
 
 int main(int, char**) {
     String hello = "Hello";
-    ///hello = String::format("%d", 130);
+
 #if 0
     try{
         LOG(hello << " xd");

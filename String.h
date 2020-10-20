@@ -17,7 +17,6 @@
 #include <iostream>
 
 #include "StringIterator.hpp"
-//#include "ConstStringIterator.h"
 
 class String
 {

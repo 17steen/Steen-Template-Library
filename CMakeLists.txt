@@ -4,7 +4,7 @@ project(test VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_executable(test0 test.cpp String.cpp StringIterator.cpp)
+add_executable(test0 test.cpp String.cpp)
 
 add_definitions(-D_DEBUG_LOG)
 set(CMAKE_CXX_FLAGS  "-std=c++11 ${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")

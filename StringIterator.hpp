@@ -26,7 +26,6 @@ public:
         ptr_ = nullptr;
     };
 
-
     iterator &operator++()
     {
         ++ptr_;
@@ -54,6 +53,7 @@ public:
     {
         return iterator(ptr_ + i);
     };
+
     iterator operator-(std::ptrdiff_t i) const
     {
         return iterator(ptr_ - i);

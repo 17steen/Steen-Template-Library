@@ -134,7 +134,7 @@ String String::_repeat(std::size_t amount) const
         {
             LOG("Loop");
             end =
-                std::uninitialized_copy(this->_addr, this->_addr + this->_size, end);
+                std::uninitialized_copy(this->_addr, this->_addr + _size, end);
             --amount;
         }
         copy.set_zero();
