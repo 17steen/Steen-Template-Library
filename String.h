@@ -64,7 +64,7 @@ public:
 	String(std::istream &);
 	~String();
 
-	String substr(int, int) const;
+	String substr(int index_start, int n_to_take) const;
 
 	Iterator begin();
 	Iterator end();

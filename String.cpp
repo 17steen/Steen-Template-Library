@@ -64,7 +64,7 @@ String::String(const char *str)
 
 String::String(ConstIterator first, ConstIterator last)
 {
-    if (last < first) throw;
+    if (last < first) throw std::out_of_range("Cannot have a negative size.");
     
     const char* ptr = &(*first);
     size_t sub_max_len = strlen(ptr);
@@ -90,9 +90,10 @@ String::String(std::istream &is)
     set_zero();
 }
 
-String String::substr(int start, int last) const
+String String::substr(int start, int take_n) const
 {
-    return String(cbegin() + start, cbegin() + last);
+    if (_size <= start) throw std::out_of_range("String::substr(int, int) : Starting position out of bounds.");
+    return String(cbegin() + start, cbegin() + start + take_n);
 }
 
 const String &String::operator=(const char *str)
