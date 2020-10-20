@@ -32,7 +32,7 @@ int main(int, char**) {
 
     hello = hello.to_uppercase();
 
-    auto substr =  hello.substr(0, 3);
+    auto substr =  hello.substr(3, 10);
 
     std::cout << substr << " : " << substr.size() << std::endl;
 

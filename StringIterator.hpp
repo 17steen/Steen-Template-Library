@@ -68,7 +68,7 @@ public:
         return reinterpret_cast<std::ptrdiff_t>(ptr_) - reinterpret_cast<std::ptrdiff_t>(it.ptr_);
     };
 
-    pointer operator[](int index)
+    reference operator[](int index)
     {
         return *(ptr_ + index);
     };

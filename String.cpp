@@ -64,11 +64,12 @@ String::String(const char *str)
 
 String::String(ConstIterator first, ConstIterator last)
 {
-    if (last < first)
-    {
-        throw;
-    }
-    _size = last - first;
+    if (last < first) throw;
+    
+    const char* ptr = &(*first);
+    size_t sub_max_len = strlen(ptr);
+    size_t sub_len = last - first;
+    _size = sub_max_len < sub_len ? sub_max_len : sub_len;
     _addr = _alloc(_size + 1);
     char *c = _addr;
     std::uninitialized_copy(first, last, begin());
