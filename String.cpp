@@ -1,15 +1,18 @@
 #include "String.h"
 
-String::String() : String("")
-{
-}
+#include <algorithm>
+#include <cctype>
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
+#include <memory>
 
-char *String::_alloc(size_t amount)
-{
-    return new char[amount];
-}
+using Iterator = StringIterator<false>;
+using ConstIterator = StringIterator<true>;
 
-//takes care of resizing and copying + assigning the new length
+char *String::_alloc(size_t amount) { return new char[amount]; }
+
+// takes care of resizing and copying + assigning the new length
 char *String::_re_alloc(String &str, size_t len_next)
 {
     char *tmp = _alloc(len_next + 1);
@@ -21,25 +24,27 @@ char *String::_re_alloc(String &str, size_t len_next)
     return end;
 }
 
-String String::format(const char* format, ...){
-    char buffer[256] = { 0 };
+String String::format(const char *format, ...)
+{
+    char buffer[256] = {0};
     va_list args;
     va_start(args, format);
-    std::vsnprintf (buffer, 256, format, args);
+    std::vsnprintf(buffer, 256, format, args);
     va_end(args);
     return String(buffer);
 }
+
+String::String() : String("") {}
 
 String::String(const String &src) : _size(src._size)
 {
     LOG("constructs (from copy)");
     _addr = _alloc(_size + 1);
 
-    std::strcpy(_addr, src._addr);
+    std::uninitialized_copy_n(src._addr, _size, _addr);
 }
 
-String::String(String &&src) noexcept :
-    _size(src._size), _addr(src._addr)
+String::String(String &&src) noexcept : _size(src._size), _addr(src._addr)
 {
     src._addr = nullptr;
     LOG("constructs (from moving)");
@@ -52,8 +57,21 @@ String::String(const char *str)
 
     _addr = _alloc(_size + 1);
 
-    std::strcpy(_addr, str);
+    std::uninitialized_copy_n(str, _size, _addr);
 
+    set_zero();
+}
+
+String::String(ConstIterator first, ConstIterator last)
+{
+    if (last < first)
+    {
+        throw;
+    }
+    _size = last - first;
+    _addr = _alloc(_size + 1);
+    char *c = _addr;
+    std::uninitialized_copy(first, last, begin());
     set_zero();
 }
 
@@ -64,9 +82,16 @@ String::String(std::istream &is)
     is.getline(buffer, sizeof(buffer) - 1, '\n');
     size_t len = std::strlen(buffer);
     _addr = _alloc(len + 1);
-    std::strncpy(_addr, buffer, len);
+
+    std::uninitialized_copy_n(buffer, len, _addr);
+
     _size = len;
     set_zero();
+}
+
+String String::substr(int start, int last) const
+{
+    return String(cbegin() + start, cbegin() + last);
 }
 
 const String &String::operator=(const char *str)
@@ -85,7 +110,7 @@ const String &String::operator=(const String &str)
     LOG(_size);
     _addr = _alloc(_size + 1);
 
-    std::strcpy(_addr, str._addr);
+    std::uninitialized_copy_n(str._addr, _size, _addr);
 
     return *this;
 }
@@ -108,8 +133,8 @@ String String::_repeat(std::size_t amount) const
         while (amount > 1)
         {
             LOG("Loop");
-            end = std::uninitialized_copy(this->_addr,
-                                          this->_addr + this->_size, end);
+            end =
+                std::uninitialized_copy(this->_addr, this->_addr + this->_size, end);
             --amount;
         }
         copy.set_zero();
@@ -128,12 +153,9 @@ String String::operator+(const char *str) const
     return copy;
 }
 
-char &String::operator[](int index)
-{
-    return _addr[index];
-}
+char &String::operator[](int index) { return _addr[index]; }
 
-//boundary checking and reverse access (negative)
+// boundary checking and reverse access (negative)
 char &String::at(int index)
 {
     bool is_positive = index >= 0 ? true : false;
@@ -166,29 +188,40 @@ const String &String::operator+=(const String &str)
     return *this += str._addr;
 }
 
+String String::to_lowercase() const
+{
+    String copy(*this);
+    for (char &c : copy)
+        c = std::tolower((int)c);
+    return copy;
+}
+
+String String::to_uppercase() const
+{
+    String copy(*this);
+    for (char &c : copy)
+        c = std::toupper((int)c);
+    return copy;
+}
+
 String::~String()
 {
     LOG("destructs");
-    if(_addr) delete[] _addr;
+    if (_addr)
+        delete[] _addr;
     _addr = nullptr;
 }
 
-const char *String::address() const
-{
-    return _addr;
-}
+const char *String::address() const { return _addr; }
 
-std::size_t String::size() const
-{
-    return _size;
-}
+std::size_t String::size() const { return _size; }
 
 std::ostream &operator<<(std::ostream &os, const String &str)
 {
     return os << str._addr;
 }
 
-//length of the buffer is 255;
+// length of the buffer is 255;
 std::istream &operator>>(std::istream &is, String &str)
 {
     str = String(is);
@@ -211,35 +244,21 @@ String &String::set_zero()
     return *this;
 }
 
-StringIterator String::begin()
-{
-    return StringIterator(_addr);
-}
+Iterator String::begin() { return Iterator(_addr); }
 
-StringIterator String::end()
-{
-    return StringIterator(_addr + _size);
-}
+Iterator String::end() { return Iterator(_addr + _size); }
 
-bool String::operator==(const String &str) const
-{
-    return _comp(str) == 0;
-};
+ConstIterator String::cbegin() const { return ConstIterator(_addr); }
 
-bool String::operator!=(const String &str) const
-{
-    return _comp(str) != 0;
-};
+ConstIterator String::cend() const { return ConstIterator(_addr + _size); }
 
-bool String::operator>(const String &str) const
-{
-    return _comp(str) > 0;
-};
+bool String::operator==(const String &str) const { return _comp(str) == 0; };
 
-bool String::operator<(const String &str) const
-{
-    return _comp(str) < 0;
-};
+bool String::operator!=(const String &str) const { return _comp(str) != 0; };
+
+bool String::operator>(const String &str) const { return _comp(str) > 0; };
+
+bool String::operator<(const String &str) const { return _comp(str) < 0; };
 
 bool String::operator>=(const String &str) const
 {

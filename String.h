@@ -15,19 +15,15 @@
 #endif
 
 #include <iostream>
-#include <memory>
 
-#include <cctype>
-#include <cstring>
-#include <cstdio>
-#include <cstdarg>
-
-#include "StringIterator.h"
+#include "StringIterator.hpp"
+//#include "ConstStringIterator.h"
 
 class String
 {
 public:
-	using Iterator = StringIterator;
+	using Iterator = StringIterator<false>;
+	using ConstIterator = StringIterator<true>;
 
 public:
 	const char *address() const;
@@ -36,7 +32,11 @@ public:
 	String operator+(const char *str) const;
 	String operator+(const String &str) const;
 
-	static String format(const char* format, ...);
+	String to_lowercase() const;
+	String to_uppercase() const;
+
+	//String constructor using printf formatting
+	static String format(const char *format, ...);
 
 	char &operator[](int);
 	char &at(int);
@@ -54,24 +54,23 @@ public:
 	bool operator>=(const String &str) const;
 	bool operator<=(const String &str) const;
 
-	inline String repeat(std::size_t amount) const
-	{
-		return _repeat(amount);
-	};
-	inline String operator*(std::size_t amount) const
-	{
-		return _repeat(amount);
-	};
+	inline String repeat(std::size_t amount) const { return _repeat(amount); };
+	inline String operator*(std::size_t amount) const { return _repeat(amount); };
 
 	String();
+	String(ConstIterator first, ConstIterator last);
 	String(const char *str);
 	String(const String &src);
 	String(String &&src) noexcept;
 	String(std::istream &);
 	~String();
 
+	String substr(int, int) const;
+
 	Iterator begin();
 	Iterator end();
+	ConstIterator cbegin() const;
+	ConstIterator cend() const;
 
 	friend std::ostream &operator<<(std::ostream &os, const String &);
 	friend std::istream &operator>>(std::istream &is, String &);

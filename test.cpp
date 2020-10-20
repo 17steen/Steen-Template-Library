@@ -3,14 +3,16 @@
 #include <algorithm>
 #include <utility>
 
+#include <cctype>
+
 #include "String.h"
 
   
 
 int main(int, char**) {
     String hello = "Hello";
-    std::move(hello);
     ///hello = String::format("%d", 130);
+#if 0
     try{
         LOG(hello << " xd");
     }
@@ -19,7 +21,7 @@ int main(int, char**) {
     }
 
 
-#if 1
+
     {
         String test(hello);
         std::cout << test * 5 << std::endl; //correct result 
@@ -28,10 +30,11 @@ int main(int, char**) {
     }
 #endif
 
-    for(char &c : hello)
-        std::cout << c;
-    std::cout << std::endl;
+    hello = hello.to_uppercase();
 
+    auto substr =  hello.substr(0, 3);
+
+    std::cout << substr << " : " << substr.size() << std::endl;
 
     std::cin.get();
 
