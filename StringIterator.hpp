@@ -18,11 +18,13 @@ private:
     char *ptr_;
 
 public:
-    StringIterator(char *ptr) : ptr_(ptr) {};
-    StringIterator(const StringIterator &iterator){
+    StringIterator(char *ptr) : ptr_(ptr){};
+    StringIterator(const StringIterator &iterator)
+    {
         ptr_ = iterator.ptr_;
     };
-    ~StringIterator() {
+    ~StringIterator()
+    {
         ptr_ = nullptr;
     };
 
