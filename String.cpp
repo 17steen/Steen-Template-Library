@@ -42,6 +42,8 @@ String::String(const String &src) : _size(src._size)
     _addr = _alloc(_size + 1);
 
     std::uninitialized_copy_n(src._addr, _size, _addr);
+    
+    set_zero();
 }
 
 String::String(String &&src) noexcept : _size(src._size), _addr(src._addr)
