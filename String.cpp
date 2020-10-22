@@ -114,6 +114,8 @@ const String &String::operator=(const String &str)
 
     std::uninitialized_copy_n(str._addr, _size, _addr);
 
+    set_zero();
+
     return *this;
 }
 
