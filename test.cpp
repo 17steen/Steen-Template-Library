@@ -28,6 +28,11 @@ int main(int, char **)
 
     std::cout << substr << " : " << substr.size() << std::endl;
 
+    for(auto it = hello.begin(); it != hello.end(); ++it){
+        *it = 'X';
+        std::cout << *it << std::endl;
+    }
+
     std::cin.get();
 
     return 0;

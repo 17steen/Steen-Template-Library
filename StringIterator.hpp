@@ -51,29 +51,30 @@ public:
         return copy;
     };
 
-    iterator operator+(std::ptrdiff_t i) const
+    iterator operator+(difference_type i) const
     {
         return iterator(ptr_ + i);
     };
 
-    iterator operator-(std::ptrdiff_t i) const
+    iterator operator-(difference_type i) const
     {
         return iterator(ptr_ - i);
     };
 
-    std::ptrdiff_t operator+(iterator it) const
+    difference_type operator+(iterator it) const
     {
-        return reinterpret_cast<std::ptrdiff_t>(ptr_) + reinterpret_cast<std::ptrdiff_t>(it.ptr_);
+        return reinterpret_cast<difference_type>(ptr_) + reinterpret_cast<difference_type>(it.ptr_);
     };
-    std::ptrdiff_t operator-(iterator it) const
+    difference_type operator-(iterator it) const
     {
-        return reinterpret_cast<std::ptrdiff_t>(ptr_) - reinterpret_cast<std::ptrdiff_t>(it.ptr_);
+        return reinterpret_cast<difference_type>(ptr_) - reinterpret_cast<difference_type>(it.ptr_);
     };
 
     reference operator[](int index)
     {
         return *(ptr_ + index);
     };
+
     reference operator*()
     {
         return *ptr_;
