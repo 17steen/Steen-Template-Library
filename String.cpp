@@ -108,6 +108,9 @@ const String &String::operator=(const char *str)
 const String &String::operator=(const String &str)
 {
     LOG("assign (from string&)");
+    if(str._addr == _addr) // such a dumb edge case 
+        return *this;
+    
     this->~String();
     LOG("after destruction");
     _size = str._size;

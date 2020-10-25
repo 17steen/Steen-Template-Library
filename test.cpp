@@ -10,12 +10,16 @@
 
 int main(int, char **)
 {
+    String hello = "hello brosss";
+    hello = hello;
+
+    std::cout << hello << std::endl;
+#if 0
     Option<String> opt;
     {
         std::cout << (opt = Option<String>(String("XDDDD"))).value() << std::endl;
     }
 
-#if 0
     try
     {
         std::cerr << hello.at(999) << std::endl;
