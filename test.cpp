@@ -6,12 +6,16 @@
 #include <cctype>
 
 #include "String.h"
+#include "Option.hpp"
 
 int main(int, char **)
 {
-    String hello = "Hello";
+    Option<String> opt;
+    {
+        std::cout << (opt = Option<String>(String("XDDDD"))).value() << std::endl;
+    }
 
-#if 1
+#if 0
     try
     {
         std::cerr << hello.at(999) << std::endl;
@@ -20,7 +24,6 @@ int main(int, char **)
     {
         std::cerr << e.what() << std::endl;
     }
-#endif
 
     hello = hello.to_uppercase();
 
@@ -32,6 +35,7 @@ int main(int, char **)
         *it = 'X';
         std::cout << *it << std::endl;
     }
+#endif
 
     std::cin.get();
 
