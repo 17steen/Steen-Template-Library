@@ -42,7 +42,7 @@ String::String(const String &src) : _size(src._size)
     _addr = _alloc(_size + 1);
 
     std::uninitialized_copy_n(src._addr, _size, _addr);
-    
+
     set_zero();
 }
 
@@ -66,9 +66,10 @@ String::String(const char *str)
 
 String::String(ConstIterator first, ConstIterator last)
 {
-    if (last < first) throw std::out_of_range("Cannot have a negative size.");
-    
-    const char* ptr = &(*first);
+    if (last < first)
+        throw std::out_of_range("Cannot have a negative size.");
+
+    const char *ptr = &(*first);
     size_t sub_max_len = strlen(ptr);
     size_t sub_len = last - first;
     _size = sub_max_len < sub_len ? sub_max_len : sub_len;
@@ -94,7 +95,8 @@ String::String(std::istream &is)
 
 String String::substr(int start, int take_n) const
 {
-    if (_size <= start) throw std::out_of_range("String::substr(int, int) : Starting position out of bounds.");
+    if (_size <= start)
+        throw std::out_of_range("String::substr(int, int) : Starting position out of bounds.");
     return String(cbegin() + start, cbegin() + start + take_n);
 }
 
@@ -108,9 +110,9 @@ const String &String::operator=(const char *str)
 const String &String::operator=(const String &str)
 {
     LOG("assign (from string&)");
-    if(str._addr == _addr) // such a dumb edge case 
+    if (str._addr == _addr) // such a dumb edge case
         return *this;
-    
+
     this->~String();
     LOG("after destruction");
     _size = str._size;
@@ -261,25 +263,27 @@ ConstIterator String::cbegin() const { return ConstIterator(_addr); }
 
 ConstIterator String::cend() const { return ConstIterator(_addr + _size); }
 
-bool String::operator==(const String &str) const { return _comp(str) == 0; };
+bool String::empty() const { return _addr && _size; }
 
-bool String::operator!=(const String &str) const { return _comp(str) != 0; };
+bool String::operator==(const String &str) const { return _comp(str) == 0; }
 
-bool String::operator>(const String &str) const { return _comp(str) > 0; };
+bool String::operator!=(const String &str) const { return _comp(str) != 0; }
 
-bool String::operator<(const String &str) const { return _comp(str) < 0; };
+bool String::operator>(const String &str) const { return _comp(str) > 0; }
+
+bool String::operator<(const String &str) const { return _comp(str) < 0; }
 
 bool String::operator>=(const String &str) const
 {
     int res = _comp(str);
     return res == 0 || res > 0;
-};
+}
 
 bool String::operator<=(const String &str) const
 {
     int res = _comp(str);
     return res == 0 || res < 0;
-};
+}
 
 int String::_comp(const String &str) const
 {

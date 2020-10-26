@@ -45,6 +45,8 @@ public:
 	const String &operator=(const char *str);
 	const String &operator=(const String &str);
 
+	bool empty() const;
+
 	bool operator==(const String &str) const;
 	bool operator<(const String &str) const;
 	bool operator>(const String &str) const;
