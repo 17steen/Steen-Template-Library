@@ -112,11 +112,6 @@ public:
         return *this;
     }
 
-    operator bool() const
-    {
-        return has_value_;
-    }
-
     T &operator*()
     {
         return val_;
@@ -124,7 +119,7 @@ public:
 
     bool has_value() const
     {
-        return bool(*this);
+        return has_value_;
     }
 
 private:
